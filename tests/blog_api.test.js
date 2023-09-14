@@ -11,6 +11,10 @@ describe("when there are initially some blogs saved", () => {
     await Blog.insertMany(helper.initialBlogs);
   });
 
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -22,10 +26,6 @@ describe("when there are initially some blogs saved", () => {
     const response = await api.get("/api/blogs");
 
     expect(response.body).toHaveLength(helper.initialBlogs.length);
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
   });
 
   test("blogs have 'id' property", async () => {
