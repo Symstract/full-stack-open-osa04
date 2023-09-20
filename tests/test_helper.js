@@ -1,4 +1,6 @@
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const initialBlogs = [
   {
@@ -69,8 +71,24 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON());
 };
 
+const usersInDb = async () => {
+  const users = await User.find({});
+  return users.map((user) => user.toJSON());
+};
+
+const generateAuthHeaderForUser = async (username) => {
+  const user = await User.findOne({ username });
+  const token = jwt.sign(
+    { user: user.username, id: user._id.toString() },
+    process.env.SECRET
+  );
+  return `Bearer ${token}`;
+};
+
 module.exports = {
   initialBlogs,
   nonExistingId,
   blogsInDb,
+  usersInDb,
+  generateAuthHeaderForUser,
 };
